@@ -720,18 +720,23 @@ class Propel
      */
     private static function processDriverOptions($source, &$write_to)
     {
-        foreach ($source as $option => $optiondata) {
+        foreach ($source as $option => $value) {
             if (is_string($option) && strpos($option, '::') !== false) {
                 $key = $option;
             } elseif (is_string($option)) {
                 $key = 'PropelPDO::' . $option;
             }
+
+            if ($key === null) {
+                throw new PropelException("PDO Option should be a PDO string, but {$option} given");
+            }
+
             if (!defined($key)) {
                 throw new PropelException("Invalid PDO option/attribute name specified: " . $key);
             }
+
             $key = constant($key);
 
-            $value = $optiondata['value'];
             if (is_string($value) && strpos($value, '::') !== false) {
                 if (!defined($value)) {
                     throw new PropelException("Invalid PDO option/attribute value specified: " . $value);
